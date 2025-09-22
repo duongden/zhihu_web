@@ -9,7 +9,7 @@
                         <span class="if-not-md">Back</span>
                     </a>
                 </div>
-                <div class="title">页面</div>
+                <div class="title">加载中</div>
                 <div class="right">
                     <a id="open-original-link" class="link external" target="_blank"
                         href="https://www.zhihu.com/${$f7route.params.type}/${$f7route.params.id}" title="在新窗口打开原文">
@@ -102,11 +102,6 @@
         padding: 5px 0;
     }
 
-    #toc-container a {
-        text-decoration: none;
-        color: #007aff;
-    }
-
     #toc-container a:hover {
         text-decoration: underline;
     }
@@ -116,18 +111,18 @@
     }
 
     .toc-toggle-btn {
-        background: none;
-        border: none;
-        color: #007aff;
-        cursor: pointer;
+        color: var(--f7-theme-color);
         padding: 5px 0;
         font-size: 0.9em;
+        text-align: center;
     }
 </style>
 
 <script>
-    export default function (props, { $f7, $f7route, $on, $onBeforeMount, $onMounted, $onBeforeUnmount, $onUnmounted }) {
+    export default function (props, { $f7, $f7route, $f7router, $on, $onBeforeMount, $onMounted, $onBeforeUnmount, $onUnmounted, $el }) {
         alert("部分页面渲染不完全 请向 https://github.com/huajiqaq/zhihu_web 提供issue")
+
+        let navbarHeight = 0;
         const renderZhihuContentWithIds = (segments) => {
             if (!segments || segments.length === 0) {
                 return '';
@@ -159,9 +154,9 @@
                         }
                         return `<p>${paragraphText}</p>`;
                     case 'heading':
-                        // navbar 固定高度64px 写死
+                        // navbar 高度依靠测量
                         const headingIdForRender = `heading-${index}`;
-                        return `<h3 style="scroll-margin: 64px" id="${headingIdForRender}">${content.text || ''}</h3>`;
+                        return `<h3 style="scroll-margin: ${navbarHeight}px" id="${headingIdForRender}">${content.text || ''}</h3>`;
                     case 'code_block':
                         return `<pre><code>${content.content || ''}</code></pre>`;
                     case 'blockquote': {
@@ -273,11 +268,9 @@
         };
 
         $on('pageInit', async (e, page) => {
-            console.log('pageInit', e);
             const pageparams = $f7route.params;
             const pageid = pageparams.id;
             const pageType = pageparams.type;
-            window.aaa = page
             const dynamicContent = page.$el.find('#dynamic-content')[0];
 
             function getGetType(pageType) {
@@ -293,6 +286,13 @@
 
             try {
                 const resData = await window.zhihu.get(`https://api.zhihu.com/${getGetType(pageType)}s/v2/${pageid}`);
+                const navbarEl = app.navbar.getElByPage(page);
+                // 测量navbar高度
+                navbarHeight = navbarEl.offsetHeight;
+                if (resData.header) {
+                    navbarEl.querySelector(".title").textContent = resData.header.text
+                }
+
                 let htmlContent = '';
 
                 if (resData.author) {
@@ -301,7 +301,7 @@
                 <div class="card card-outline-md">
                   <div class="card-content card-content-padding">
                     <div class="author-info">
-                      <img src="${resData.author.avatar?.avatar_image?.day || 'path/to/default/avatar.png'}" class="author-avatar" alt="${resData.author.fullname || 'Author'}'s Avatar" />
+                      <img src="${resData.author.avatar?.avatar_image?.day}" class="author-avatar" alt="${resData.author.fullname || 'Author'}'s Avatar" />
                       <div class="author-text">
                         <div class="author-name">${resData.author.fullname || resData.author.name || '未知作者'}</div>
                         <div class="author-headline">${resData.author.description || resData.author.headline || ''}</div>
@@ -328,12 +328,6 @@
                         video: { id: resData.video.attachment_id, title: resData.video.title }
                     });
                 }
-                if (resData.type === "answer" && resData.header) {
-                    segments.unshift({
-                        type: "heading",
-                        heading: { text: resData.header.text }
-                    });
-                }
 
                 if (pageType === 'p') {
                     segments.forEach((segment, index) => {
@@ -355,7 +349,7 @@
                         }).join('');
 
                         const toggleButtonHtml = hasMoreThanMax ?
-                            `<button id="toc-toggle-btn" class="toc-toggle-btn">展开 (${tocItems.length - MAX_VISIBLE_ITEMS} 项)</button>` : '';
+                            `<div id="toc-toggle-btn" class="toc-toggle-btn">展开 (${tocItems.length - MAX_VISIBLE_ITEMS} 项)</div>` : '';
 
                         tocHtml = `
                             <div id="toc-container" class="block">
