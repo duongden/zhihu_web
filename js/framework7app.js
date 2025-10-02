@@ -36,6 +36,14 @@ $("#my-login-screen .login-button").on("click", function () {
   app.dialog.alert("Username: " + username + "<br/>Password: " + password);
 });
 window.alert = app.dialog.alert;
+window.toast = function (text, duration = 2000, position = "bottom") {
+  var toast = app.toast.create({
+    text: text,
+    position: position, // bottom / center / top
+    closeTimeout: duration, // 自动关闭时间
+  });
+  toast.open();
+};
 
 function toggleToolbar(show) {
   const toolbar = document.querySelector(".toolbar");
@@ -66,7 +74,7 @@ document.addEventListener("page:beforein", function (e) {
 });
 
 // 离开主页（动画完成后触发）
-document.addEventListener("page:afterout", function (e) {
+document.addEventListener("page:beforeout", function (e) {
   if (e.target && e.target.dataset.name === "home") {
     toggleToolbar(false);
     console.log("[framework7app.js] out home page");
