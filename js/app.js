@@ -6,6 +6,7 @@ import { ThemeComponent } from "./components/theme.js";
 import { userCard } from "./components/userCard.js";
 import { CookieEditor } from "./components/cookieEditor.js";
 import { openLink } from "./components/webview.js";
+import {} from "./components/comments.js";
 
 createApp({
   userCard,

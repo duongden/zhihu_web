@@ -611,6 +611,60 @@
           });
         }
       }, 0);
+
+      // --- [NEW] Use CommentsComponent to fetch and log comments ---
+      const commentsManager = CommentsComponent();
+
+      const logComments = async () => {
+        console.log(
+          `[Debug] Using CommentsComponent to fetch for ${pageType}/${pageid}...`
+        );
+
+        // 1. Fetch root comments using the component's logic
+        const rootResult = await commentsManager.fetchComments({
+          resourceType: pageType,
+          resourceId: pageid,
+        });
+
+        console.log(
+          "--- [Debug] Fetched Root Comments. Now fetching replies... ---"
+        );
+
+        // 2. Iterate and fetch child comments
+        for (const comment of rootResult.comments) {
+          if (comment.replies_count > 0) {
+            const childResult = await commentsManager.fetchComments({
+              commentId: comment.id,
+            });
+            // Attach children to the root comment object
+            comment.child_comments = childResult.comments;
+          }
+        }
+
+        console.log(
+          "\n--- [Debug] Simplified Comment Structure from Component ---"
+        );
+        // Simplify the output for clarity in the console
+        const simplifiedOutput = rootResult.comments.map((c) => ({
+          author_name: c.author_name,
+          content: c.content,
+          ip_location: c.ip_location,
+          like_count: c.like_count,
+          replies_count: c.replies_count,
+          child_comments: c.child_comments.map((child) => ({
+            author_name: child.author_name,
+            content: child.content,
+            reply_to_author: child.reply_to_author,
+          })),
+        }));
+        console.log(JSON.stringify(simplifiedOutput, null, 2));
+        console.log(
+          "---------------------------------------------------------\n"
+        );
+      };
+
+      logComments();
+      // --- [END NEW] ---
     });
 
     return $render;
