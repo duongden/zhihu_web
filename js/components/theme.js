@@ -69,6 +69,19 @@ export function ThemeComponent() {
   };
 }
 
+// 修复图片显示不完整问题的 JS 方案
+function fixPhotoBrowserSwiper() {
+  const wrapper = document.querySelector(".photo-browser-swiper-container");
+  alert("1");
+  if (wrapper) {
+    alert("2");
+    wrapper.style.width = "100%";
+    wrapper.style.height = "100%";
+    wrapper.style.boxSizing = "border-box";
+  }
+}
+window.fixPhotoBrowserSwiper = fixPhotoBrowserSwiper;
+
 // Expose component to global scope for petite-vue and general access
 window.ThemeComponent = ThemeComponent;
 

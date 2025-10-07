@@ -26,10 +26,59 @@
     <div class="page-content full-content">
       <div id="dynamic-content"></div>
     </div>
+    <!-- Floating Action Bar -->
+    <div class="fab fab-right-bottom">
+      <a>
+        <i class="icon f7-icons if-not-md">plus</i>
+        <i class="icon f7-icons if-not-md">xmark</i>
+        <i class="icon material-icons md-only">add</i>
+        <i class="icon material-icons md-only">close</i>
+      </a>
+      <div class="fab-buttons fab-buttons-top">
+        <a href="" class="fab-label-button">
+          <i class="icon material-icons" style="font-size: 20px">comment</i>
+          <span class="fab-label">评论</span>
+        </a>
+        <a href="" class="fab-label-button">
+          <i class="icon material-icons" style="font-size: 20px">bookmark</i>
+          <span class="fab-label">收藏</span>
+        </a>
+        <a href="" class="fab-label-button">
+          <i class="icon material-icons" style="font-size: 20px">favorite</i>
+          <span class="fab-label">点赞</span>
+        </a>
+      </div>
+    </div>
+
+    <!-- End Floating Action Bar -->
   </div>
 </template>
 
 <style>
+  .photo-browser-swiper-container {
+    max-width: 100% !important;
+    max-height: 100% !important;
+    box-sizing: border-box !important;
+    width: 100%;
+    height: 100% !important;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+    /* 新增：让图片垂直居中 */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .photo-browser-swiper-container img,
+  .photo-browser-slide img,
+  .swiper-slide img {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain !important; /* 关键：完整显示图片 */
+    margin: auto;
+    display: block;
+    background: #fff;
+  }
   /* 在.content下的p */
   .contents p {
     font-size: var(--content-p-font-size, 16px);
@@ -143,9 +192,9 @@
       $el,
     }
   ) {
-    toast(
-      "部分页面渲染不完全 请向 https://github.com/huajiqaq/zhihu_web 提供issue"
-    );
+    // toast(
+    //   "部分页面渲染不完全 请向 https://github.com/huajiqaq/zhihu_web 提供issue"
+    // );
 
     let navbarHeight = 0;
     const renderZhihuContentWithIds = (segments) => {
@@ -596,7 +645,7 @@
           // 创建 Photo Browser 实例
           const photoBrowser = app.photoBrowser.create({
             photos: photos,
-            type: "page",
+            type: "standalone",
             theme: "auto",
           });
 
@@ -607,6 +656,8 @@
               photoBrowser.open(idx);
             });
           });
+          // 修复图片浏览器BUG:(theme.js)
+          // fixPhotoBrowserSwiper();
         }
       }, 0);
 

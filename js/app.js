@@ -7,6 +7,7 @@ import { userCard } from "./components/userCard.js";
 import { CookieEditor } from "./components/cookieEditor.js";
 import { openLink } from "./components/webview.js";
 import {} from "./components/comments.js";
+// import {} from "./capacitorController.js";
 
 createApp({
   userCard,
