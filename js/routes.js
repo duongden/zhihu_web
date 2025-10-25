@@ -6,6 +6,7 @@ var routes = [
   {
     path: "/home",
     url: "./pages/home.html",
+    keepAlive: true
   },
   {
     path: "/about/",
@@ -25,8 +26,8 @@ var routes = [
   },
 
   {
-    path: "/dynamic-route/blog/:blogId/post/:postId/",
-    componentUrl: "./pages/dynamic-route.html",
+    path: "/people/:id/",
+    componentUrl: "./pages/people.html",
   },
 
   {

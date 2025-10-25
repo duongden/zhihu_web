@@ -1,0 +1,170 @@
+<template>
+    <div class="page" data-name="people">
+        <div class="navbar">
+            <div class="navbar-bg"></div>
+            <div class="navbar-inner">
+                <div class="left">
+                    <a href="#" class="link back" id="webiew-back-button">
+                        <i class="icon icon-back"></i>
+                        <span class="if-not-md">Back</span>
+                    </a>
+                </div>
+                <div class="title">${state.pageTitle}</div>
+            </div>
+        </div>
+        <div class="page-content full-content">
+            <div class="card people-card">
+                <div class="card-content card-content-padding">
+                    <img src="https://placehold.co/80x80/29B6F6/ffffff?text=U" class="people-avatar" />
+                    <div class="people-action-buttons">
+                        <button class="button button-fill button-round">关注</button>
+                        <button class="button button-fill button-round">私信</button>
+                    </div>
+                </div>
+            </div>
+            <div class="toolbar toolbar-bottom tabbar">
+                <div class="toolbar-inner">
+                    ${state.tabs.map(tab => $h`
+                    <a key="${tab.id}" href="#${tab.id}" class="tab-link">
+                        ${tab.title}
+                    </a>
+                    `)}
+                </div>
+            </div>
+            <swiper-container class="tabs">
+                ${state.tabs.map(tab => $h`
+                <swiper-slide class="tab" id="${tab.id}">
+                    <div class="ptr-content infinite-scroll-content"
+                        @ptr:refresh="${(e, done) => loadMore(tab.id, done)}" data-infinite-distance="200"
+                        @infinite="${(e, done) => loadMore(tab.id, null)}" style="height: 100%; overflow: auto;">
+                        <div class="ptr-preloader">
+                            <div class="preloader"></div>
+                            <div class="ptr-arrow"></div>
+                        </div>
+                        <div class="list card-list">
+                            ${(state.alldata[tab.id] || []).map(item => $h`
+                            <div class="card" key="${item.id}">
+                                <a style="color: inherit"
+                                    href="/content/${item.dataType || 'unknown'}/${item.id || ''}">
+                                    ${item.header ? $h`<div class="card-header">${item.header}</div>` : ''}
+                                    <div class="card-content">${item.content}</div>
+                                </a>
+                                <div class="card-footer">
+                                    <a href="javascript:void(0)" @click="${() => openLink(item.authorUrl)}"
+                                        rel="noopener">
+                                        ${item.footer}
+                                    </a>
+                                </div>
+                            </div>
+                            `)}
+                            ${loadingMore && $h`
+                            <div class="preloader infinite-scroll-preloader"></div>
+                            `}
+                        </div>
+                    </div>
+                </swiper-slide>
+                `)}
+            </swiper-container>
+        </div>
+    </div>
+</template>
+
+<style>
+    .people-card {
+        text-align: center;
+    }
+
+    .people-avatar {
+        width: 80px;
+        height: 80px;
+        border-radius: 50%;
+        margin: 0 auto 16px;
+    }
+
+    .people-action-buttons {
+        display: flex;
+        justify-content: center;
+        gap: 20px;
+    }
+
+    .people-action-buttons button {
+        flex: 1;
+        max-width: 120px;
+    }
+</style>
+
+<script>
+    export default function (
+        props,
+        {
+            $f7,
+            $f7route,
+            $f7router,
+            $on,
+            $update
+        }
+    ) {
+        const state = {
+            pageTitle: '加载中...',
+            tabs: [],
+            alldata: {}
+        };
+
+        const userid = $f7route.params.id;
+
+        if (typeof window.openLink !== 'function') {
+            window.openLink = (url) => {
+                url = (url || '').trim();
+                if (url) window.open(url, '_blank', 'noopener,noreferrer');
+            };
+        }
+
+        const mypeo = Mypep();
+        mypeo.userId = userid;
+
+        loadingMore = false;
+
+        async function loadMore(tabId, done) {
+            if (loadingMore) return;
+            loadingMore = true;
+            const newItem = await mypeo.fetchData(tabId);
+            if (!state.alldata[tabId]) state.alldata[tabId] = [];
+            state.alldata[tabId] = state.alldata[tabId].concat(newItem);
+            console.log(newItem);
+            $update();
+            if (done) done();
+            loadingMore = false;
+        }
+
+        $on('pageInit', async (e, page) => {
+            try {
+                const peoData = await mypeo.fetchUser(userid);
+                state.pageTitle = peoData.name || `用户 ${userid}`;
+                const tabsData = await mypeo.fetchTabs();
+                state.tabs = tabsData;
+                mypeo.tabs = tabsData;
+                const alldata = {};
+                tabsData.forEach(tab => {
+                    alldata[tab.id] = [];
+                });
+                state.alldata = alldata;
+                setTimeout(() => {
+                    page.$el.find('.tab-link')[0].click();
+                    const ptrs = page.$el.find('.ptr-content')
+                    ptrs.forEach(element => {
+                        app.ptr.create(element);
+                        app.infiniteScroll.create(element);
+                    });
+                }, 10);
+                $update();
+            } catch (err) {
+                state.pageTitle = '用户主页';
+                state.tabs = [{ id: 'activities', title: '动态' }];
+                state.alldata = { activities: [] };
+                $update();
+            }
+        });
+
+        return $render;
+    }
+</script>

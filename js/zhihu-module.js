@@ -48,7 +48,7 @@ class ZhihuRequest {
     this.encryptData = encryptData.bind(this);
 
     // --- 构建默认请求头 ---
-    const x_app_za = "OS=Android";
+    const x_app_za = "OS=Android&Release=15&Model=Pixel&VersionName=10.12.0&VersionCode=21210&Product=com.zhihu.android&Installer=Google+Play&DeviceType=AndroidPhone";
     const user_agent = `${appBundle}/Futureve/${appVersion} Mozilla/5.0 (Linux; Android; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/57.0.1000.10 Mobile Safari/537.36`;
 
     // 通用请求头，用于所有知乎域名
@@ -122,8 +122,8 @@ class ZhihuRequest {
         !data || Object.keys(data).length === 0
           ? "" // 如果数据为空，则发送空字符串
           : encryptBody
-          ? this.encryptData(data, true) // 加密表单数据
-          : JSON.stringify(data); // 不加密，转为 JSON 字符串
+            ? this.encryptData(data, true) // 加密表单数据
+            : JSON.stringify(data); // 不加密，转为 JSON 字符串
 
       // 根据是否加密设置 Content-Type
       requestHeaders["Content-Type"] = encryptBody
@@ -224,22 +224,29 @@ export function initZhihu({ loginData, zsts, defaultHeaders }) {
   // 如果没有提供登录数据，则使用一个默认的游客账号
   if (!loginData) {
     loginData = {
-      udid: "ahPURXrgGhtLBSaMAkkLZ1XLjOPi4xm2pr0=",
+      udid: 'UraTB9TKRhtLBYAOB4UmHKrPn18Tg811TFQ=',
       guest: {
-        access_token:
-          "gt2.0AAAAAIw3E2gbGuB6RdQTagAAAAxNVQJgAgAZuafvehJMOFIfwlmesYN6qPaMxA==",
-        token_type: "bearer",
-        user_type: "guest",
-        id: "0ae9ee71229d74a123a3ce37efa9a403",
-        uid: 1953120204302321000,
-        push_channel: "pm_n_1dad208ec1f07aa9b3ef265ba8ab5daa",
-        URL: "",
+        access_token: 'gt2.0AAAAAI9lh-cbRsrUB5O2UgAAAAxNVQJgAgC0JjzaArWyMX2KTozuYn71fSF1hQ==',
+        token_type: 'bearer',
+        user_type: 'guest',
+        id: '30f6dfae636d89c2078c6c0676a2929f',
+        uid: 1965481299495085000,
+        push_channel: 'pm_n_4c16eb12348347b7ad35126bb50e61d4',
+        URL: '',
         cookie: {
-          q_c0: "",
-          z_c0: "gt2.0AAAAAIw3E2gbGuB6RdQTagAAAAxNVQJgAgAZuafvehJMOFIfwlmesYN6qPaMxA==",
+          q_c0: '',
+          z_c0: 'gt2.0AAAAAI9lh-cbRsrUB5O2UgAAAAxNVQJgAgC0JjzaArWyMX2KTozuYn71fSF1hQ=='
         },
-        created_at: 0,
-      },
+        created_at: 0
+      }
+    }
+    zsts = [
+      '2.0IeUTj9TKRhsMAAAASwUAADIuMPui_GgAAAAAngWRhxBicaoZtrn_UBY16lmTsmU=',
+      '2uSTcNTKRhsbYMgVuWpD4QRnkRP48-uihQ9CAA=='
+    ]
+    // 数盟id 使用模拟器可以无限生成 未登录必须添加上这个
+    defaultHeaders = {
+      "x-ms-id": "DUzQXhjAQDuNnnrXUZuXcZAHclw7VipDNE79RFV6UVhoakFRRHVObm5yWFVadVhjWkFIY2x3N1ZpcERORTc5c2h1",
     };
   }
 

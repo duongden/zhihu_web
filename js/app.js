@@ -6,13 +6,10 @@ import { ThemeComponent } from "./components/theme.js";
 import { userCard } from "./components/userCard.js";
 import { CookieEditor } from "./components/cookieEditor.js";
 import { openLink } from "./components/webview.js";
-import {} from "./components/comments.js";
+import { } from "./components/comments.js";
 // import {} from "./capacitorController.js";
 
-createApp({
-  userCard,
-}).mount("#app");
-
+import { Mypep } from "./components/people.js"
 function loadPetiteVue() {
   // 挂载到每个Page
   const mounted = new WeakSet();
