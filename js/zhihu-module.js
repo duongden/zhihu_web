@@ -203,6 +203,9 @@ export function initZhihu({ loginData, zsts, defaultHeaders }) {
     if (!isFormData) {
       if (typeof data !== "string") throw new Error("URL data must be a string");
       const apiPrefix = "https://api.zhihu.com";
+      if (data.startsWith("http://api.zhihu.com")) {
+        data = data.replace("http://", "https://");
+      }
       if (!data.startsWith(apiPrefix)) {
         throw new Error(`URL 必须以 ${apiPrefix} 开头`);
       }
