@@ -1,1 +1,0 @@
-import{m as e,o as t,y as n}from"./index-VHBRJ8e6.js";var r={},i={class:`search-page`};function a(t,r){return n(),e(`div`,i,`Search`)}var o=t(r,[[`render`,a]]);export{o as default};
