@@ -1,7 +1,7 @@
 import {
-	init,
-	update,
-	get
+	initZhihu,
+	updateZhihuLoginData,
+	getZhihuInstance
 } from './utils/zhihu-module.js';
 
 class PaginatedResult {
@@ -16,14 +16,14 @@ class PaginatedResult {
 
 	async next() {
 		if (!this.paging.next) return null;
-		const zhihuRequest = get();
+		const zhihuRequest = getZhihuInstance();
 		const res = await zhihuRequest.get(this.paging.next, this.options);
 		return new PaginatedResult(res.data, res.paging, this.options);
 	}
 
 	async prev() {
 		if (!this.paging.prev) return null;
-		const zhihuRequest = get();
+		const zhihuRequest = getZhihuInstance();
 		const res = await zhihuRequest.get(this.paging.prev, this.options);
 		return new PaginatedResult(res.data, res.paging, this.options);
 	}
@@ -31,37 +31,37 @@ class PaginatedResult {
 
 const httpMethods = {
 	get(url, options = {}) {
-		const zhihuRequest = get();
+		const zhihuRequest = getZhihuInstance();
 		return zhihuRequest.get(url, options).then(res =>
 			new PaginatedResult(res.data, res.paging, options)
 		);
 	},
 
 	post(url, data = {}, options = {}) {
-		const zhihuRequest = get();
+		const zhihuRequest = getZhihuInstance();
 		return zhihuRequest.post(url, data, options).then(res => res.data);
 	},
 
 	patch(url, data = {}, options = {}) {
-		const zhihuRequest = get();
+		const zhihuRequest = getZhihuInstance();
 		return zhihuRequest.patch(url, data, options).then(res => res.data);
 	},
 
 	put(url, data = {}, options = {}) {
-		const zhihuRequest = get();
+		const zhihuRequest = getZhihuInstance();
 		return zhihuRequest.put(url, data, options).then(res => res.data);
 	},
 
 	delete(url, options = {}) {
-		const zhihuRequest = get();
+		const zhihuRequest = getZhihuInstance();
 		return zhihuRequest.delete(url, options).then(res => res.data);
 	},
 };
 
 
 export {
-	init,
-	update,
-	get
+	initZhihu,
+	updateZhihuLoginData,
+	getZhihuInstance
 };
 export default httpMethods;

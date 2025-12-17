@@ -4,20 +4,16 @@ if (!typeof GM_xmlhttpRequest === 'function') {
 }
 
 import { createApp } from 'vue'
-import "./md5.min.js"
 import 'sober' //引入所有组件
 import './style.css'
 import App from './App.vue'
 
 import router from './router'
 
-import http, {
-    init,
-    get,
-    update
-} from '@/api/http.js';
-init({})
+import http, { initZhihu, getZhihuInstance } from '@/api/http.js';
+// 每次打开网页时尝试更新用户数据
+await initZhihu();
 window.$http = http;
-window.$zhihu = get();
+window.$zhihu = getZhihuInstance();
 
 createApp(App).use(router).mount('#app')

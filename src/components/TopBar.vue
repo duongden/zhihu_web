@@ -1,12 +1,12 @@
 <script setup>
-import { ref } from 'vue'
+import { ref, onMounted, onUnmounted } from 'vue'
 import { useRouter } from 'vue-router'
 import MaterialSymbol from './MaterialSymbol.vue'
 import LoginDialog from './LoginDialog.vue'
+import { useUser } from '@/composables/userManager'
 
 const router = useRouter()
 const showLogin = ref(false)
-const currentUser = ref(null)
 
 const toggleDrawer = () => {
     const drawer = document.querySelector('s-drawer')
@@ -20,12 +20,42 @@ const navigateToSearch = () => {
 }
 
 const handleAvatarClick = () => {
-    showLogin.value = true
+    if (!isLoggedIn.value) {
+        showLogin.value = true
+    }
 }
 
-const onLoginSuccess = (userData) => {
-    currentUser.value = userData
+
+const {
+  currentUser,
+  isLoggedIn,
+  isRefreshing,
+  refreshUser,
+  onUserUpdate
+} = useUser()
+
+// 订阅用户数据更新
+let unsubscribe = null
+onMounted(() => {
+    refreshUser()
+    // 添加用户数据更新订阅
+    unsubscribe = onUserUpdate((updatedUserData) => {
+        console.log('User data updated in TopBar:', updatedUserData)
+    })
+})
+
+onUnmounted(() => {
+    // 组件卸载时取消订阅，防止内存泄漏
+    if (unsubscribe) {
+        unsubscribe()
+    }
+})
+
+const onLoginSuccess = () => {
+    showLogin.value = false
+    refreshUser()
 }
+
 </script>
 
 <template>
@@ -49,8 +79,9 @@ const onLoginSuccess = (userData) => {
             <s-icon-button class="tablet-only">
                 <MaterialSymbol icon="chat_bubble" />
             </s-icon-button>
-            <s-avatar :src="currentUser?.avatar_url || 'https://picsum.photos/id/64/200/200'" class="avatar"
-                @click="handleAvatarClick"></s-avatar>
+            <s-avatar :src="currentUser?.avatar_url" class="avatar" @click="handleAvatarClick">
+                <span v-if="!isLoggedIn">游客</span>
+            </s-avatar>
         </div>
     </s-appbar>
     <LoginDialog v-model="showLogin" @login-success="onLoginSuccess" />

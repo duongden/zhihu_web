@@ -13,6 +13,13 @@ function unifiedFetch(url, options = {}) {
 		const isGet = method === 'GET' || method === 'HEAD';
 		const requestData = isGet ? null : body;
 
+		// 处理Cookie和cookie的赋值
+		const customCookie = headers.Cookie || headers.cookie;
+		if (customCookie !== undefined) {
+			delete headers.Cookie;
+			delete headers.cookie;
+		}
+
 		const gmOptions = {
 			method: method,
 			url: url,
@@ -82,6 +89,11 @@ function unifiedFetch(url, options = {}) {
 
 		if (requestData !== null) {
 			gmOptions.data = requestData;
+		}
+
+		if (customCookie !== undefined) {
+			gmOptions.anonymous = true
+			gmOptions.cookie = customCookie;
 		}
 
 		GM_xmlhttpRequest(gmOptions);

@@ -124,7 +124,6 @@ const fetchHotData = async () => {
             const titleArea = target.title_area || {};
             const metricsArea = target.metrics_area || {};
             const linkInfo = target.link || {};
-            console.log(item)
 
             return {
                 id: item.card_id.split("Q_")[1],

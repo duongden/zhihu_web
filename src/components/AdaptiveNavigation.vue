@@ -2,6 +2,7 @@
 import { ref, onMounted, onUnmounted } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
 import MaterialSymbol from './MaterialSymbol.vue';
+import { useUser } from '@/composables/userManager';
 
 const props = defineProps({
     onLogout: {
@@ -17,6 +18,15 @@ const props = defineProps({
 const router = useRouter();
 const route = useRoute();
 const isMobile = ref(false);
+const { refreshUser } = useUser();
+
+const handleRefresh = async () => {
+    await refreshUser();
+    if (isMobile.value) {
+        const drawer = document.querySelector('s-drawer');
+        if (drawer) drawer.showed = false;
+    }
+};
 
 const checkIsMobile = () => {
     if (typeof window !== 'undefined') {
@@ -39,14 +49,19 @@ const NAV_ITEMS = [
     { id: 'collections', label: '收藏', icon: 'bookmark', path: '/collections' },
     { id: 'daily', label: '日报', icon: 'newspaper', path: '/daily' },
     { id: 'history', label: '历史', icon: 'history', path: '/history' },
+    { id: 'refresh', label: '刷新', icon: 'refresh', action: handleRefresh },
     { id: 'settings', label: '设置', icon: 'settings', path: '/settings' },
 ];
 
-const handleNavigate = (path) => {
-    router.push(path);
-    if (isMobile.value) {
-        const drawer = document.querySelector('s-drawer');
-        if (drawer) drawer.showed = false;
+const handleNavigate = (item) => {
+    if (item.action) {
+        item.action();
+    } else if (item.path) {
+        router.push(item.path);
+        if (isMobile.value) {
+            const drawer = document.querySelector('s-drawer');
+            if (drawer) drawer.showed = false;
+        }
     }
 };
 
@@ -59,6 +74,7 @@ const handleMobileMoreClick = () => {
 };
 
 const isSelected = (path) => {
+    if (!path) return false;
     if (path === '/' && route.path === '/') return true;
     if (path !== '/' && route.path.startsWith(path)) return true;
     return false;
@@ -70,7 +86,7 @@ const isSelected = (path) => {
         <s-menu style="width: 100%; max-width: none; margin: 0; height: 100%; border: none;">
 
             <s-menu-item v-for="item in NAV_ITEMS" :key="item.id" :checked="isSelected(item.path)"
-                @click="handleNavigate(item.path)">
+                @click="handleNavigate(item)">
                 <MaterialSymbol slot="start" :icon="item.icon" />
                 {{ item.label }}
             </s-menu-item>
@@ -94,7 +110,7 @@ const isSelected = (path) => {
         <s-avatar class="logo-box">Z</s-avatar>
 
         <s-navigation-item v-for="item in NAV_ITEMS" :key="item.id" :selected="isSelected(item.path)"
-            @click="handleNavigate(item.path)">
+            @click="handleNavigate(item)">
             <MaterialSymbol slot="icon" :icon="item.icon" :fill="isSelected(item.path)" />
             <div slot="text">{{ item.label }}</div>
         </s-navigation-item>

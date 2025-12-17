@@ -4,9 +4,12 @@ import { useRouter, useRoute, RouterView } from 'vue-router';
 import AdaptiveNavigation from './components/AdaptiveNavigation.vue';
 import TopBar from './components/TopBar.vue';
 import MoreMenuDialog from './components/MoreMenuDialog.vue';
+import { logout } from './api/auth.js';
+import { useUser } from '@/composables/userManager';
 
 const router = useRouter();
 const route = useRoute();
+const { resetUser, refreshUser } = useUser();
 
 const isMoreDialogOpen = ref(false);
 const isMobile = ref(false);
@@ -17,7 +20,7 @@ const checkIsMobile = () => {
   }
 };
 
-onMounted(() => {
+onMounted(async () => {
   checkIsMobile();
   window.addEventListener('resize', checkIsMobile);
 });
@@ -28,7 +31,12 @@ onUnmounted(() => {
 
 const handleLogout = () => {
   if (window.confirm("确定要退出登录吗？")) {
-    router.push('/');
+    logout().then(() => {
+      resetUser();
+      // 刷新用户数据为游客数据
+      refreshUser();
+      router.push('/');
+    });
   }
 };
 
