@@ -5,6 +5,7 @@ import CommentsSheet from './CommentsSheet.vue';
 import CollectionSheet from './CollectionSheet.vue';
 import { HistoryService } from '../services/historyService.js';
 import { f7 } from 'framework7-vue';
+import html2canvas from 'html2canvas-pro';
 
 const props = defineProps({
     f7route: Object,
@@ -221,7 +222,6 @@ const toggleFavorite = async () => {
 
             f7.toast.show({
                 text: '已收藏至默认收藏夹',
-                closeTimeout: 3000,
                 closeButton: true,
                 closeButtonText: '更换',
                 on: {
@@ -234,14 +234,14 @@ const toggleFavorite = async () => {
             await $http.delete(`${url}?failed_multi=1`, { encryptHead: true });
             item.value.isFavorited = false;
             item.value.metrics.favlists--;
-            f7.toast.show({ text: '已取消收藏', closeTimeout: 2000 });
+            f7.toast.show({ text: '已取消收藏' });
         }
     } catch (e) {
         console.error('Failed to toggle favorite', e);
     }
 };
 
-const navClick = () => {
+const navTitleClick = () => {
     if (type == "answer") props.f7router.navigate(`/question/${item.value.questionID}`);
 }
 
@@ -266,23 +266,112 @@ const onCollectionSuccess = (isFavorited) => {
     }
 };
 
+// Save article as image
+const saveAsImage = async () => {
+    if (!item.value) return;
+
+    f7.toast.show({ text: '正在生成截图...' });
+
+    try {
+        // Find the main content wrapper
+        const contentWrapper = document.querySelector('.content-wrapper');
+        if (!contentWrapper) {
+            throw new Error('Content wrapper not found');
+        }
+
+        // Calculate actual content height by removing padding-bottom
+        const computedStyle = window.getComputedStyle(contentWrapper);
+        const paddingBottom = parseInt(computedStyle.paddingBottom, 10);
+        const actualContentHeight = contentWrapper.scrollHeight - paddingBottom;
+        
+        // Use html2canvas-pro to capture the content
+        const canvas = await html2canvas(contentWrapper, {
+            width: contentWrapper.offsetWidth,
+            height: actualContentHeight,
+            scale: 2, // Higher scale for better quality
+            useCORS: true, // Allow loading images from other domains
+            logging: false, // Disable logging
+            backgroundColor: '#ffffff', // Set white background
+        });
+
+        // Convert canvas to data URL for preview
+        const dataURL = canvas.toDataURL('image/png', 0.95);
+
+        // Create a custom dialog with image preview
+        f7.dialog.create({
+            title: '截图预览',
+            content: `
+                <div style="padding: 10px; text-align: center;">
+                    <img src="${dataURL}" style="max-width: 100%; max-height: 60vh; border-radius: 8px;" />
+                </div>
+            `,
+            buttons: [
+                {
+                    text: '取消',
+                    role: 'cancel',
+                    onClick: () => {
+                        // No action needed for cancel
+                    }
+                },
+                {
+                    text: '保存',
+                    onClick: () => {
+                        // Convert canvas to blob for download
+                        canvas.toBlob((blob) => {
+                            if (blob) {
+                                const url = URL.createObjectURL(blob);
+                                window.open(url, '_blank');
+                                
+                                // Clean up
+                                URL.revokeObjectURL(url);
+                                
+                                f7.toast.show({ text: '截图已保存' });
+                            }
+                        }, 'image/png', 0.95);
+                    }
+                }
+            ],
+            verticalButtons: false,
+            on: {
+                close: () => {
+                    // Clean up resources when dialog closes
+                    // Note: dataURL is a base64 string, no need to revoke
+                }
+            }
+        }).open();
+
+    } catch (error) {
+        console.error('Failed to save as image:', error);
+        f7.toast.show({ text: '截图失败，请重试' });
+    }
+};
+
 </script>
 
 <template>
     <f7-page class="article-detail">
-        <f7-navbar @click="navClick">
+        <f7-navbar>
             <f7-nav-left>
                 <f7-link icon-only @click="f7router.back()">
                     <f7-icon ios="f7:arrow_left" md="material:arrow_back" />
                 </f7-link>
             </f7-nav-left>
-            <f7-nav-title v-if="item">{{ item.title }}</f7-nav-title>
+            <f7-nav-title v-if="item" @click="navTitleClick">{{ item.title }}</f7-nav-title>
             <f7-nav-right>
-                <f7-link icon-only>
+                <f7-link icon-only popover-open=".article-actions-popover">
                     <f7-icon ios="f7:ellipsis_circle" md="material:more_horiz" />
                 </f7-link>
             </f7-nav-right>
         </f7-navbar>
+
+        <!-- Article Actions Popover -->
+        <f7-popover class="article-actions-popover">
+            <f7-list>
+                <f7-list-item title="以图片形式保存" link popover-close @click="saveAsImage" />
+                <f7-list-item title="举报" link popover-close
+                    @click="$openLink(`https://www.zhihu.com/report?id=${id}&type=${type}&source=android&ab_signature=`)" />
+            </f7-list>
+        </f7-popover>
 
         <div v-if="loading" class="loading-container display-flex justify-content-center align-items-center"
             style="height: 100%;">
@@ -380,8 +469,7 @@ const onCollectionSuccess = (isFavorited) => {
         </div>
 
         <CommentsSheet v-model="showComments" :resourceId="id" :resourceType="type" :f7router="f7router" />
-        <CollectionSheet v-model="showCollection" :contentId="id" :contentType="type"
-            @success="onCollectionSuccess" />
+        <CollectionSheet v-model="showCollection" :contentId="id" :contentType="type" @success="onCollectionSuccess" />
 
         <f7-popover class="toc-popover" :opened="showToc" @popover:closed="showToc = false">
             <div class="display-flex justify-content-between align-items-center padding">

@@ -141,11 +141,11 @@ const deleteFromCollection = (item) => {
         try {
             const url = `https://api.zhihu.com/collections/${collectionId}/contents/${item.id}?content_type=${item.type}`;
             await $http.delete(url, { encryptHead: true });
-            f7.toast.show({ text: '已移除', closeTimeout: 2000 });
+            f7.toast.show({ text: '已移除' });
             items.value = items.value.filter(i => i.id !== item.id);
         } catch (e) {
             console.error('Failed to delete item:', e);
-            f7.toast.show({ text: '移除失败', closeTimeout: 2000 });
+            f7.toast.show({ text: '移除失败' });
         }
     });
 };
@@ -155,11 +155,11 @@ const deleteEntireCollection = () => {
         try {
             const url = `https://api.zhihu.com/collections/${collectionId}`;
             await $http.delete(url, { encryptHead: true });
-            f7.toast.show({ text: '已删除收藏夹', closeTimeout: 2000 });
+            f7.toast.show({ text: '已删除收藏夹' });
             props.f7router.back();
         } catch (e) {
             console.error('Failed to delete collection:', e);
-            f7.toast.show({ text: '删除失败', closeTimeout: 2000 });
+            f7.toast.show({ text: '删除失败' });
         }
     });
 };
@@ -183,15 +183,15 @@ const toggleFollowCollection = async () => {
         if (!isFollowing) {
             await $http.post(url, "", { encryptHead: true });
             collectionInfo.value.isFollowing = true;
-            f7.toast.show({ text: '已关注收藏夹', closeTimeout: 2000 });
+            f7.toast.show({ text: '已关注收藏夹' });
         } else {
             await $http.delete(`${url}/${currentUser.value.id}`, "", { encryptHead: true });
             collectionInfo.value.isFollowing = false;
-            f7.toast.show({ text: '已取消关注', closeTimeout: 2000 });
+            f7.toast.show({ text: '已取消关注' });
         }
     } catch (e) {
         console.error('Failed to toggle follow collection:', e);
-        f7.toast.show({ text: '操作失败', closeTimeout: 2000 });
+        f7.toast.show({ text: '操作失败' });
     }
 };
 

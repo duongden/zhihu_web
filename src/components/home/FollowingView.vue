@@ -133,14 +133,14 @@ const handleFollowClick = async (item) => {
         if (item.isFollowing) {
             await $http.delete(`https://api.zhihu.com/people/${item.id}/followers/${userId.value}`);
             item.isFollowing = false;
-            f7.toast.create({ text: '取关成功', closeTimeout: 2000 }).open();
+            f7.toast.create({ text: '取关成功' }).open();
         } else {
             await $http.post(`https://api.zhihu.com/people/${item.id}/followers`);
             item.isFollowing = true;
-            f7.toast.create({ text: '关注成功', closeTimeout: 2000 }).open();
+            f7.toast.create({ text: '关注成功' }).open();
         }
     } catch (e) {
-        f7.toast.create({ text: '操作失败', closeTimeout: 2000 }).open();
+        f7.toast.create({ text: '操作失败' }).open();
     }
 };
 

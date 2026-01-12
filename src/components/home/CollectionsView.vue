@@ -159,7 +159,7 @@ const doCreate = async () => {
         const result = await $http.post(url, params.toString(), { encryptBody: false, encryptHead: true });
 
         if (result && result.id) {
-            f7.toast.show({ text: '创建成功', closeTimeout: 2000 });
+            f7.toast.show({ text: '创建成功' });
             tabData.mine.list.unshift(mapItem('mine', result));
             showCreatePopup.value = false;
         }
@@ -197,7 +197,7 @@ const showSearchPrompt = () => {
             if (value.trim()) {
                 props.f7router.navigate(`/search-result/collection/${value}/${effectiveUserId.value}`);
             } else {
-                f7.toast.show({ text: '搜索关键词不能为空', closeTimeout: 2000 });
+                f7.toast.show({ text: '搜索关键词不能为空' });
             }
         },
         (value) => {

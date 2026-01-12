@@ -20,6 +20,10 @@ const f7params = {
   toast: {
     closeTimeout: 3000,
   },
+  dialog: {
+    buttonOk: "确认",
+    buttonCancel: "取消"
+  },
   serviceWorker: process.env.NODE_ENV === 'production' ? {
     path: '/service-worker.js',
   } : {},
@@ -58,6 +62,7 @@ onMounted(async () => {
       panel.on('close', handlePanelClose);
 
     }
+    window.testf7 = f7;
   });
 });
 

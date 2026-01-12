@@ -55,7 +55,7 @@ const parts = computed(() => {
     <span>
         <template v-for="(part, index) in parts" :key="index">
             <span v-if="part.type === 'text'">{{ part.content }}</span>
-            <a v-else-if="part.markType === 'link' && part.link" :href="part.link.href" target="_blank"
+            <a v-else-if="part.markType === 'link' && part.link" :href="`javascript:$openLink('${part.link.href}')`"
                 class="styled-link" @click.stop>
                 {{ part.content }}
             </a>

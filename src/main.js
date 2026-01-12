@@ -1,5 +1,5 @@
 if (typeof GM_xmlhttpRequest !== 'function') {
-    alert('未检测到油猴（Tampermonkey环境！');
+    alert('未检测到油猴（Tampermonkey环境！）');
     window.location.href = 'https://greasyfork.org/scripts/508709';
 }
 

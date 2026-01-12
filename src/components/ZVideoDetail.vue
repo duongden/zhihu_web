@@ -81,7 +81,7 @@ const fetchVideoData = async () => {
         }
     } catch (e) {
         console.error('Failed to fetch video data:', e);
-        f7.toast.create({ text: '加载失败', closeTimeout: 2000 }).open();
+        f7.toast.create({ text: '加载失败' }).open();
     } finally {
         isLoading.value = false;
     }
@@ -169,7 +169,6 @@ const toggleFavorite = async () => {
 
             f7.toast.show({
                 text: '已收藏至默认收藏夹',
-                closeTimeout: 3000,
                 closeButton: true,
                 closeButtonText: '更换',
                 on: {
@@ -182,11 +181,11 @@ const toggleFavorite = async () => {
             await $http.delete(`${url}?failed_multi=1`, { encryptHead: true });
             videoData.value.isFavorited = false;
             videoData.value.metrics.favlists--;
-            f7.toast.show({ text: '已取消收藏', closeTimeout: 2000 });
+            f7.toast.show({ text: '已取消收藏' });
         }
     } catch (e) {
         console.error('Failed to toggle favorite', e);
-        f7.toast.show({ text: '操作失败', closeTimeout: 2000 });
+        f7.toast.show({ text: '操作失败' });
     }
 };
 

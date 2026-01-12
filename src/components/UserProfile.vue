@@ -326,7 +326,6 @@ const headerHeight = ref(0);
 const headerRef = ref(null);
 
 onMounted(() => {
-    window.testf7 = f7;
     fetchUserInfo();
     fetchTabs().then(() => {
         if (activeTab.value) fetchContent(activeTab.value);

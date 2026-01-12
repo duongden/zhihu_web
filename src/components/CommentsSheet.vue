@@ -36,6 +36,8 @@ const replyContent = ref('');
 
 const expandedComment = ref(null);
 const repliesViewLoading = ref(false);
+const scrollPosition = ref(0);
+const commentsContainerRef = ref(null);
 
 const formatComment = (item) => {
     const id = item.id;
@@ -149,7 +151,6 @@ const sendComment = async () => {
         await $http.post(url, JSON.stringify(postData));
         f7.toast.show({
             text: "发送成功 如若想看到自己发言请刷新数据",
-            closeTimeout: 2000,
             position: 'center'
         });
         clearReply();
@@ -160,6 +161,11 @@ const sendComment = async () => {
 };
 
 const openRepliesView = async (comment) => {
+    // Record current scroll position
+    if (commentsContainerRef.value) {
+        scrollPosition.value = commentsContainerRef.value.scrollTop;
+    }
+    
     expandedComment.value = comment;
 
     if (comment.repliesCount > 0) {
@@ -173,6 +179,14 @@ const closeRepliesView = () => {
     if (expandedComment.value) {
         expandedComment.value.childComments = [];
     }
+    
+    // Restore scroll position after DOM updates
+    setTimeout(() => {
+        if (commentsContainerRef.value) {
+            commentsContainerRef.value.scrollTop = scrollPosition.value;
+        }
+    }, 0);
+    
     expandedComment.value = null;
 };
 
@@ -235,7 +249,6 @@ const deleteComment = async (commentId) => {
             await $http.delete(url);
             f7.toast.show({
                 text: "删除成功",
-                closeTimeout: 2000,
                 position: 'center'
             });
             // Refresh comments
@@ -374,7 +387,7 @@ const convertLinksToOpenlink = function (html) {
                 </f7-link>
             </div>
 
-            <div class="page-content" style="flex: 1; overflow-y: auto;">
+            <div class="page-content" ref="commentsContainerRef" style="flex: 1; overflow-y: auto;">
                 <!-- Replies View -->
                 <div v-if="expandedComment" class="replies-view">
                     <!-- Simplified logic to show main comment and replies -->

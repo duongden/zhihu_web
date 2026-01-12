@@ -91,7 +91,6 @@ const handleConfirm = async () => {
 
         f7.toast.show({
             text: addIds.length > 0 ? "收藏成功" : "取消收藏成功",
-            closeTimeout: 2000,
             position: 'center'
         });
         const isFavorited = collections.value.some(c => c.selected);
@@ -127,7 +126,7 @@ const doCreate = async () => {
         const result = await $http.post(url, params.toString(), { encryptBody: false, encryptHead: true });
 
         if (result && result.id) {
-            f7.toast.show({ text: '创建成功', closeTimeout: 2000 });
+            f7.toast.show({ text: '创建成功' });
             collections.value.unshift({
                 id: String(result.id),
                 title: createData.title,

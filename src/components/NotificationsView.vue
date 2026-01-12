@@ -60,7 +60,7 @@ const fetchNotifications = async (tabId, isRefresh = false) => {
         state.lastResult = res;
     } catch (e) {
         console.error(`Failed to fetch notifications ${tabId}`, e);
-        f7.toast.create({ text: '加载失败', closeTimeout: 2000 }).open();
+        f7.toast.create({ text: '加载失败' }).open();
     } finally {
         state.loading = false;
     }
@@ -185,7 +185,7 @@ const formatTime = (timestamp) => {
 const markAllAsRead = async () => {
     try {
         await $http.post('https://www.zhihu.com/api/v4/notifications/v2/default/actions/readall');
-        f7.toast.create({ text: '已全部标记为已读', closeTimeout: 2000 }).open();
+        f7.toast.create({ text: '已全部标记为已读' }).open();
 
         Object.values(tabData).forEach(state => {
             state.list.forEach(item => {
@@ -194,7 +194,7 @@ const markAllAsRead = async () => {
         });
     } catch (e) {
         console.error('Failed to mark all as read', e);
-        f7.toast.create({ text: '操作失败', closeTimeout: 2000 }).open();
+        f7.toast.create({ text: '操作失败' }).open();
     }
 };
 
@@ -213,7 +213,7 @@ const handleNotificationClick = (notification) => {
                     f7router.navigate(`/article/article/${targetInfo.actualId}`);
                 }
             } else {
-                f7.toast.create({ text: '暂不支持跳转到评论', closeTimeout: 2000 }).open();
+                f7.toast.create({ text: '暂不支持跳转到评论' }).open();
             }
             break;
         case 'system':

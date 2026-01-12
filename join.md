@@ -1,7 +1,6 @@
-你可通过本项目提交PR来贡献 [Pull requests · huajiqaq/zhihu_web (github.com)](https://github.com/huajiqaq/zhihu_web/pulls)
+你可通过本项目提交PR来贡献 [Pull requests · zhihulite/zhihu_web (github.com)](https://github.com/zhihulite/zhihu_web/pulls)
 
 目前进度
 
-- [ ] 主页支持更多Tab栏
-- [ ] 支持设置
+- [ ] 路由缓存 解决重复加载 解决用户页点击更多可能会请求 api.zhihu.com/type/v2 问题
       
