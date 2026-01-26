@@ -9,3 +9,5 @@
 https://github.com/zhihulite/zhihu_web/blob/main/join.md
 
 这里也写明了一些后续计划
+
+本项目使用修改版 Framework7（修复原版已知且暂未官方修复的bug）项目地址：https://github.com/huajiqaq/framework7/tree/mymaster  下载后请自行打包，替换项目中原Framework7相关依赖包
