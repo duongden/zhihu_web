@@ -31,7 +31,7 @@ const f7params = {
     buttonCancel: "取消"
   },
   serviceWorker: process.env.NODE_ENV === 'production' ? {
-    path: basePath + 'service_workers.js',
+    path: basePath + 'service-worker.js',
   } : {},
 };
 
