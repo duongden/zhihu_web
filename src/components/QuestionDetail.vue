@@ -221,7 +221,7 @@ watch(sortOrder, () => {
         </f7-navbar>
 
         <div v-if="!question" class="loading-state display-flex justify-content-center align-items-center"
-            style="height: 100vh;">
+            style="height: 100dvh;">
             <f7-preloader />
         </div>
 
@@ -383,7 +383,7 @@ watch(sortOrder, () => {
     display: flex;
     align-items: center;
     justify-content: center;
-    min-height: 100vh;
+    min-height: 100dvh;
 }
 
 .spin {

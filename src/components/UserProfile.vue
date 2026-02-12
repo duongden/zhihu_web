@@ -649,7 +649,7 @@ const showSearchPrompt = () => {
 }
 
 .tabs-section {
-    height: calc(100vh - var(--f7-navbar-height) - var(--f7-safe-area-top) - var(--f7-toolbar-height));
+    height: calc(100dvh - var(--f7-navbar-height) - var(--f7-safe-area-top) - var(--f7-toolbar-height));
     display: flex;
     flex-direction: column;
 }
