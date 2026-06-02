@@ -60,8 +60,8 @@ npm run build-vue:prod    # 构建 Vue 包
 
 ### 步骤 5：替换项目依赖
 
-- 将 `packages/framework7` 文件夹替换到 `zhihu_web/node_modules/framework7`
-- 将 `packages/framework7-vue` 文件夹替换到 `zhihu_web/node_modules/framework7-vue`
+- 将 `packages/core` 文件夹替换到 `zhihu_web/node_modules/framework7`
+- 将 `packages/vue` 文件夹替换到 `zhihu_web/node_modules/framework7-vue`
 
 ### 步骤 6：重新构建并运行
 
